@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.4'
-#       jupytext_version: 1.1.3
+#       jupytext_version: 1.2.1
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -106,7 +106,7 @@ interact(im_extend, alpha = (0, 2, 0.1), beta=(0, 2, 0.1), offset_x = (0, 7, 1),
 
 
 # ## 画像の拡大
-# + 拡大行列$P(\alpha, \beta)$は
+# + せん断行列$Q(\gamma)$は
 # $$
 # Q(\gamma) = \left[\begin{array}{cc}
 #     1 & \gamma \\
@@ -368,8 +368,6 @@ train_X[:,1] = np.random.uniform(low = domain_X[0], high = domain_X[1], size = n
 true_w = np.array([2, 3])
 train_Y = train_X @ true_w + np.random.normal(scale = 4, size = n)
 
-np.linalg.eigh(train_X.T @ train_X)
-
 beta = 2
 
 # +
@@ -407,5 +405,7 @@ plt.show()
 
 # + mleが引っ張られる理由はラグランジュの未定乗数法から出るが、線形代数学の範囲外なので割愛
 # + 
+
+
 
 
