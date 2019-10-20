@@ -331,6 +331,59 @@ plt.imshow(X_dash_dash)
 plt.show()
 # -
 
+# ### 逆行列が存在しない1次変換の例
+
+# +
+B = np.array([[1, 1],[0, 1]])
+offset_x, offset_y = 4, 4
+pos_dash = np.zeros((len(pos_x), 2))
+X_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(zip(pos_x, pos_y)):
+    pos_dash[i,:] = np.round(B @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash[int(pos_dash[i,0]), int(pos_dash[i,1])] = X[pos_x[i], pos_y[i]]
+print("元の画像:")
+plt.imshow(X)
+plt.show()
+
+print("1次変換の行列:")
+print(B)
+print("適用後の画像:")
+plt.imshow(X_dash)
+plt.show()
+
+C = np.array([[1.5, 0],[0, 0]])
+pos_dash_dash = np.zeros((len(pos_x), 2))
+X_dash_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(pos_dash):
+    pos_dash_dash[i,:] = np.round(C @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash_dash[int(pos_dash_dash[i,0]), int(pos_dash_dash[i,1])] = X_dash[int(pos_dash[i,0]), int(pos_dash[i,1])]
+    
+print("1次変換の行列:")
+print(C)
+print("適用後の画像:")
+plt.imshow(X_dash_dash)
+plt.show()
+
+D = np.array([[np.cos(np.pi/4), -np.sin(np.pi/4)],[np.sin(np.pi/4), np.cos(np.pi/4)]])
+pos_dash_dash_dash = np.zeros((len(pos_x), 2))
+X_dash_dash_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(pos_dash_dash):
+    pos_dash_dash_dash[i,:] = np.round(D @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash_dash_dash[int(pos_dash_dash_dash[i,0]), int(pos_dash_dash_dash[i,1])] = X_dash_dash[int(pos_dash_dash[i,0]), int(pos_dash_dash[i,1])]
+    
+print("1次変換の行列:")
+print(D)
+print("適用後の画像:")
+plt.imshow(X_dash_dash_dash)
+plt.show()
+# -
+
 # # 固有値関連の内容
 # + データの次元を圧縮する
 
