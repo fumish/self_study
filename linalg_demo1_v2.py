@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.4'
-#       jupytext_version: 1.2.1
+#       jupytext_version: 1.2.4
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -40,7 +40,7 @@ from ipywidgets import interact
 # $$
 # ここでは、画像の拡大、せん断、回転を見てみる
 
-X = np.array([[0,0,0,0,0,0,0],[0,1,1,1,1,1,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,1,0,0,0],[0,0,0,0,0,0,0]])
+X = np.array([[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,1,1,1,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,1,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]])
 (pos_x, pos_y) = np.where(X == 1)
 
 # ## 対象となる画像:
@@ -102,7 +102,7 @@ def im_extend(alpha, beta, offset_x, offset_y):
     plt.show()
 
 
-interact(im_extend, alpha = (0, 2, 0.1), beta=(0, 2, 0.1), offset_x = (0, 7, 1), offset_y=(0, 7, 1))
+interact(im_extend, alpha = (0, 2, 0.1), beta=(0, 2, 0.1), offset_x = (0, 8, 1), offset_y=(0, 8, 1))
 
 
 # ## 画像の拡大
@@ -158,7 +158,7 @@ def im_shear(gamma, offset_x, offset_y):
     plt.show()
 
 
-interact(im_shear, gamma=(-2.7, 2.7, 0.1), offset_x = (0, 7, 1), offset_y=(0, 7, 1))
+interact(im_shear, gamma=(-2.7, 2.7, 0.1), offset_x = (0, 8, 1), offset_y=(0, 8, 1))
 
 
 # ## 画像を回転させる
@@ -211,7 +211,125 @@ def im_rotate(theta, offset_x, offset_y):
     plt.show()
 
 
-interact(im_rotate, theta=(-np.pi, np.pi+0.1, 0.1*np.pi), offset_x = (0, 7, 1), offset_y=(0, 7, 1))
+interact(im_rotate, theta=(-np.pi, np.pi+0.1, 0.1*np.pi), offset_x = (0, 8, 1), offset_y=(0, 8, 1))
+
+# ## 1次変換の合成
+# $$
+# A = \left[\begin{array}{cc}
+#     0 & 2 \\
+#     2 & 0 \\
+# \end{array}\right]
+# =
+# \left[\begin{array}{cc}
+#     0 & -1 \\
+#     1 & 0 \\
+# \end{array}\right]
+# \times
+# \left[\begin{array}{cc}
+#     2 & 0 \\
+#     0 & -2 \\
+# \end{array}\right]
+# $$
+
+# ### 直接1次変換した場合:
+
+# +
+# A = np.array([[np.sqrt(2), -0.5],[-0.5, -np.sqrt(2)]])
+A = np.array([[0, 2],[2, 0]])
+offset_x, offset_y = 4, 4
+pos_dash = np.zeros((len(pos_x), 2))
+X_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(zip(pos_x, pos_y)):
+    pos_dash[i,:] = np.round(A @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash[int(pos_dash[i,0]), int(pos_dash[i,1])] = X[pos_x[i], pos_y[i]]
+print("元の画像:")
+plt.imshow(X)
+plt.show()
+
+print("1次変換の行列:")
+print(A)
+print("1次変換適用後の画像:")
+plt.imshow(X_dash)
+plt.show()
+# -
+
+# ### 順番に1次変換を加えた場合
+
+# +
+B = np.array([[2, 0],[0, -2]])
+offset_x, offset_y = 4, 4
+pos_dash = np.zeros((len(pos_x), 2))
+X_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(zip(pos_x, pos_y)):
+    pos_dash[i,:] = np.round(B @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash[int(pos_dash[i,0]), int(pos_dash[i,1])] = X[pos_x[i], pos_y[i]]
+print("元の画像:")
+plt.imshow(X)
+plt.show()
+
+print("1次変換の行列:")
+print(B)
+print("適用後の画像:")
+plt.imshow(X_dash)
+plt.show()
+
+C = np.array([[0, -1],[1, 0]])
+pos_dash_dash = np.zeros((len(pos_x), 2))
+X_dash_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(pos_dash):
+    pos_dash_dash[i,:] = np.round(C @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash_dash[int(pos_dash_dash[i,0]), int(pos_dash_dash[i,1])] = X_dash[int(pos_dash[i,0]), int(pos_dash[i,1])]
+    
+print("1次変換の行列:")
+print(C)
+print("適用後の画像:")
+plt.imshow(X_dash_dash)
+plt.show()
+# -
+
+# ### 合成の順番を変えた場合
+
+# +
+B = np.array([[2, 0],[0, -2]])
+offset_x, offset_y = 4, 4
+pos_dash = np.zeros((len(pos_x), 2))
+X_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(zip(pos_x, pos_y)):
+    pos_dash[i,:] = np.round(B @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash[int(pos_dash[i,0]), int(pos_dash[i,1])] = X[pos_x[i], pos_y[i]]
+print("元の画像:")
+plt.imshow(X)
+plt.show()
+
+print("1次変換の行列:")
+print(B)
+print("適用後の画像:")
+plt.imshow(X_dash)
+plt.show()
+
+C = np.array([[0, -1],[1, 0]])
+pos_dash_dash = np.zeros((len(pos_x), 2))
+X_dash_dash = np.zeros(X.shape)
+for i, (i_pos_x, i_pos_y) in enumerate(pos_dash):
+    pos_dash_dash[i,:] = np.round(C @ np.array([i_pos_x - offset_x, i_pos_y - offset_y])) + np.array([offset_x, offset_y])
+
+for i in range(len(pos_x)):
+    X_dash_dash[int(pos_dash_dash[i,0]), int(pos_dash_dash[i,1])] = X_dash[int(pos_dash[i,0]), int(pos_dash[i,1])]
+    
+print("1次変換の行列:")
+print(C)
+print("適用後の画像:")
+plt.imshow(X_dash_dash)
+plt.show()
+# -
 
 # # 固有値関連の内容
 # + データの次元を圧縮する
