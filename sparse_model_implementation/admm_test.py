@@ -134,3 +134,5 @@ for ite in range(iteration):
 plt.plot(loss_func_trace)
 
 
+
+
