@@ -64,7 +64,7 @@ from sklearn.base import BaseEstimator, RegressorMixin
 # +
 ## data setting
 n = 100 # train size
-M = 150 # # of features
+M = 400 # # of features
 n_zero_ind = M//2 # # of zero elements in the parameter
 prob_seed = 20201110 # random seed
 

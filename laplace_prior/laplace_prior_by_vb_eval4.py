@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.6.0
+#       jupytext_version: 1.8.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -54,6 +54,7 @@ import numpy as np
 from scipy.stats import norm
 from scipy.stats import invwishart
 
+from scipy.optimize import minimize
 from sklearn.linear_model import LassoCV, Lasso, LassoLarsCV
 from sklearn.linear_model import RidgeCV, Ridge
 from sklearn.linear_model import ARDRegression
@@ -63,10 +64,11 @@ from sklearn.base import BaseEstimator, RegressorMixin
 
 # +
 ## data setting
-n = 100 # train size
-M = 150 # # of features
-n_zero_ind = M//2 # # of zero elements in the parameter
-prob_seed = 20201110 # random seed
+n = 200 # train size
+M = 200 # # of features
+zero_ratio = 0.5
+n_zero_ind = int(M*zero_ratio) # # of zero elements in the parameter
+prob_seed = 20210112 # random seed
 
 N = 10000 # test size
 
@@ -102,9 +104,14 @@ ln_ridge_params = {
 ln_ard_params = {
     "fit_intercept": False
 }
+ln_vb_post_laplace_params = {
+    "pri_beta": 1,
+    "iteration": 1000,
+    "is_trace": False
+}
 
 
-# ## Classes
+# # Classes
 
 class VBLaplace(BaseEstimator, RegressorMixin):
     def __init__(
@@ -479,6 +486,90 @@ class VBApproxLaplace(BaseEstimator, RegressorMixin):
     
     pass
 
+
+class LaplacePosteriorVB(BaseEstimator, RegressorMixin):
+
+    def __init__(self, pri_beta: float = 0.1, seed: int = -1, is_pri_optimize: bool = False, iteration: int = 1000, is_trace: bool = True):
+        """
+        LaplacePosteriorVB is a class to calculate an approximated posterior distribution in the diagonal Laplace distribution q(w|lambda):
+        
+        q(w|lambda=(mu,sigma)) = prod_j=1^M sqrt{2}/sigma_j exp(-sqrt{2}/sigma_j |w_j-mu_j|),
+        where mu in mathbb{R}^M, sigma in mathbb{R}^M.
+        
+        The method searches an optimized posterior in terms of minimizing KL(q(w)||p(w|X^n,Y^n)),
+        where p(w|X^n,Y^n) propto p(Y|w,X) p(w), and p(Y|w,X)=N(Y|Xw, I_n), p(w)=q(w|0_M, pri_beta),
+        i.e. we consider here ordinal linear regression problem.        
+        
+        """
+        self.pri_beta = pri_beta
+        self.seed = seed
+        self.iteration = iteration
+        self.is_trace = is_trace
+        pass
+    
+    def _initialize(self) -> (np.ndarray, np.ndarray, float):
+        """
+        Initialize parameters for an approximated posterior distribution.
+        """
+        if self.seed > 0:
+            np.random.seed(self.seed)
+        
+        est_mu = np.random.normal(size = M)
+        est_ln_sigma = np.random.normal(size = M)
+        est_pri_beta = self.pri_beta
+        return est_mu, est_ln_sigma, est_pri_beta
+        pass
+    
+    def _calc_energy(self, post_mu: np.ndarray, post_ln_sigma: np.ndarray, X:np.ndarray, y:np.ndarray, pri_beta: float) -> float:
+        """
+        Objective function over parameters for the posterior.
+        """
+        
+        post_sigma = np.exp(post_ln_sigma)
+        n, M = X.shape
+        energy = 0
+        energy += ((y-X@post_mu)**2).sum()/2 + (X**2).sum(axis=0)@post_sigma**2/2 + n/2*np.log(2*np.pi) - M - M*np.log(pri_beta)
+        energy += (-np.log(post_sigma) + np.sqrt(2)/pri_beta*np.abs(post_mu) + post_sigma/pri_beta*np.exp(-np.sqrt(2)/post_sigma*np.abs(post_mu))).sum()    
+        return energy    
+    
+    def _calc_energy_wrapper(self, est_params: np.ndarray, X:np.ndarray, y:np.ndarray, pri_beta: float) -> np.ndarray:
+        post_mu = est_params[:M]
+        post_ln_sigma = est_params[M:]
+        return self._calc_energy(post_mu, post_ln_sigma, X, y, pri_beta)
+        pass    
+    
+    def fit(self, X: np.ndarray, y: np.ndarray):
+        
+        (est_mu, est_ln_sigma, est_pri_beta) = self._initialize()
+        res = minimize(
+            fun=self._calc_energy_wrapper, x0=np.hstack([est_mu, est_ln_sigma]), 
+            args=(train_X, train_Y, est_pri_beta), method = "L-BFGS-B", options={"disp":self.is_trace, "maxiter": self.iteration}
+        )
+        
+        est_mu = res.x[:M]
+        est_ln_sigma = res.x[M:]
+        est_sigma = np.exp(est_ln_sigma)
+        
+        self.mu_ = est_mu
+        self.sigma_ = est_sigma
+        return self
+    
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        check_is_fitted(self, "mu_")
+        return X@self.mu_
+        pass
+
+    def get_params(self, deep=True) -> dict:
+        return {'pri_beta': self.pri_beta}
+
+    def set_params(self, **parameters):
+        for parameter, value in parameters.items():
+            setattr(self,parameter, value)
+        return self
+    
+    pass
+
+
 # # Experiment part
 # + By some datasets are used for train and evaluate
 
@@ -486,6 +577,7 @@ score_func = lambda X, y, coef: 1 - ((y - X@coef)**2).sum() / ((y - y.mean())**2
 score_vb_laplace_exact = np.zeros(datasets)
 score_vb_laplace_approx = np.zeros(datasets)
 score_vb_normal = np.zeros(datasets)
+score_vb_post_laplace = np.zeros(datasets)
 score_ard = np.zeros(datasets)
 score_lasso = np.zeros(datasets)
 score_ridge = np.zeros(datasets)
@@ -494,6 +586,7 @@ sq_error = lambda X, y, coef: ((y - X@coef)**2).mean()
 sq_error_vb_laplace_exact = np.zeros(datasets)
 sq_error_vb_laplace_approx = np.zeros(datasets)
 sq_error_vb_normal = np.zeros(datasets)
+sq_error_vb_post_laplace = np.zeros(datasets)
 sq_error_ard = np.zeros(datasets)
 sq_error_lasso = np.zeros(datasets)
 sq_error_ridge = np.zeros(datasets)
@@ -502,6 +595,7 @@ for dataset_ind in range(datasets):
     vb_laplace_exact_obj = VBLaplace(**ln_vb_params)
     vb_laplace_approx_obj = VBApproxLaplace(**ln_vb_params)
     vb_normal_obj = VBNormal(**ln_vb_params)
+    vb_post_laplace_obj = LaplacePosteriorVB(**ln_vb_post_laplace_params)
     lasso_obj = LassoCV(**ln_lasso_params)
     ridge_obj = RidgeCV(**ln_ridge_params)
     ard_obj = ARDRegression(**ln_ard_params)
@@ -516,6 +610,7 @@ for dataset_ind in range(datasets):
     vb_laplace_exact_obj.fit(train_X, train_Y)
     vb_normal_obj.fit(train_X, train_Y)
     vb_laplace_approx_obj.fit(train_X, train_Y)
+    vb_post_laplace_obj.fit(train_X, train_Y)
 
     test_X = np.random.normal(size = (N, M))
     test_Y = test_X @ true_w + np.random.normal(size = N)
@@ -527,6 +622,7 @@ for dataset_ind in range(datasets):
     sq_error_vb_laplace_exact[dataset_ind] = sq_error(test_X, test_Y, vb_laplace_exact_obj.mean_)
     sq_error_vb_normal[dataset_ind] = sq_error(test_X, test_Y, vb_normal_obj.mean_)
     sq_error_vb_laplace_approx[dataset_ind] = sq_error(test_X, test_Y, vb_laplace_approx_obj.mean_)
+    sq_error_vb_post_laplace[dataset_ind] = sq_error(test_X, test_Y, vb_post_laplace_obj.mu_)
 
     print(
         "sq_error:"
@@ -536,6 +632,7 @@ for dataset_ind in range(datasets):
         , sq_error_vb_laplace_exact[dataset_ind]
         , sq_error_vb_normal[dataset_ind]
         , sq_error_vb_laplace_approx[dataset_ind]
+        , sq_error_vb_post_laplace[dataset_ind]
     )    
     
     ### evaluation by R^2 score
@@ -545,6 +642,7 @@ for dataset_ind in range(datasets):
     score_vb_laplace_exact[dataset_ind] = score_func(test_X, test_Y, vb_laplace_exact_obj.mean_)
     score_vb_normal[dataset_ind] = score_func(test_X, test_Y, vb_normal_obj.mean_)
     score_vb_laplace_approx[dataset_ind] = score_func(test_X, test_Y, vb_laplace_approx_obj.mean_)
+    score_vb_post_laplace[dataset_ind] = score_func(test_X, test_Y, vb_post_laplace_obj.mu_)
     
     print(
         "R^2 score:"
@@ -554,6 +652,7 @@ for dataset_ind in range(datasets):
         , score_vb_laplace_exact[dataset_ind]
         , score_vb_normal[dataset_ind]
         , score_vb_laplace_approx[dataset_ind]
+        , score_vb_post_laplace[dataset_ind]
     )
 
 
@@ -574,6 +673,20 @@ print(
     , score_vb_normal.mean()
     , score_vb_laplace_approx.mean()
 )
+
+np.abs(vb_laplace_exact_obj.mean_ - np.sqrt(np.diag(vb_laplace_exact_obj.sigma_)))
+
+upper = vb_laplace_exact_obj.mean_ + 0.8 * np.sqrt(np.diag(vb_laplace_exact_obj.sigma_))
+
+lower = vb_laplace_exact_obj.mean_ - 0.8 * np.sqrt(np.diag(vb_laplace_exact_obj.sigma_))
+
+(((lower < 0) & (0 < upper)))[:100]
+
+(np.abs(vb_laplace_exact_obj.mean_) < 1).sum()
+
+(lasso_obj.coef_ < 0.001).sum()
+
+(true_w < 0.001).sum()
 
 import matplotlib.pyplot as plt
 

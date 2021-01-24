@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.6.0
+#       jupytext_version: 1.8.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -64,8 +64,9 @@ from sklearn.base import BaseEstimator, RegressorMixin
 # +
 ## data setting
 n = 100 # train size
-M = 150 # # of features
-n_zero_ind = M//2 # # of zero elements in the parameter
+M = 200 # # of features
+zero_ratio = 1
+n_zero_ind = int(M*zero_ratio) # # of zero elements in the parameter
 prob_seed = 20201110 # random seed
 
 N = 10000 # test size
@@ -104,7 +105,7 @@ ln_ard_params = {
 }
 
 
-# ## Classes
+# # Classes
 
 class VBLaplace(BaseEstimator, RegressorMixin):
     def __init__(
@@ -556,6 +557,20 @@ for dataset_ind in range(datasets):
         , score_vb_laplace_approx[dataset_ind]
     )
 
+
+np.abs(vb_laplace_exact_obj.mean_ - np.sqrt(np.diag(vb_laplace_exact_obj.sigma_)))
+
+upper = vb_laplace_exact_obj.mean_ + 0.8 * np.sqrt(np.diag(vb_laplace_exact_obj.sigma_))
+
+lower = vb_laplace_exact_obj.mean_ - 0.8 * np.sqrt(np.diag(vb_laplace_exact_obj.sigma_))
+
+(((lower < 0) & (0 < upper)))[:100]
+
+(np.abs(vb_laplace_exact_obj.mean_) < 1).sum()
+
+(lasso_obj.coef_ < 0.001).sum()
+
+(true_w < 0.001).sum()
 
 print(
     sq_error_lasso.mean()
