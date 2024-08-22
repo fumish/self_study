@@ -1,0 +1,18 @@
+[package]
+name = "reinforce_learning"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ndarray = "0.15.6"
+ndarray-linalg = { version = "0.16.0", features = ["intel-mkl"] }
+ndarray-stats = "0.5.1"
+intel-mkl-src = "0.8.1"
+thiserror = "1.0.61"
+blas-src = { version = "0.10.0", default-features = false, features = ["openblas"] }
+openblas-src = { version = "0.10.9", default-features = false, features = ["cblas", "system"] }
+rand = "0.8.5"
+rand_chacha = "0.3.1"
+good_lp = { version = "*", features = ["minilp"], default-features = false }
