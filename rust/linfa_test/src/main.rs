@@ -1,11 +1,14 @@
 extern crate nalgebra as na;
 
 use anyhow::Result;
+//use linfa::dataset::{DatasetBase, Labels, Records};
 use linfa::traits::Transformer;
 use linfa_clustering::{Dbscan, DbscanParams};
-use linfa_datasets::generate;
-use ndarray::Array;
+//use linfa_datasets::generate;
+use ndarray::{array, Array, Array2};
 use pcd_rs::{PcdDeserialize, Reader};
+//use rand_xoshiro::rand_core::SeedableRng;
+//use rand_xoshiro::Xoshiro256Plus;
 
 #[derive(PcdDeserialize, Debug)]
 pub struct Point {
@@ -60,14 +63,16 @@ fn main() {
     // 2d vec to na array
     //let point_arr = na::DMatrix::from_vec(point_vec.len() / 3, 3, point_vec);
     let point_arr = Array::from_shape_vec((point_vec.len() / 3, 3), point_vec).unwrap();
-
     println!("point_arr is {:?}", point_arr);
-    println!("point_arr shape is {:?}", point_arr.shape());
-    // println!("point_arr dim is {:?}", point_arr.ndim());
-    //
+    println!("point_arr dim is {:?}", point_arr.ndim());
     let min_samples = 5;
     let clusters = Dbscan::params(min_samples)
         .tolerance(1e-2)
-        .transform(&point_arr);
-    println!("res = {:?}", clusters);
+        .transform(&point_arr)
+        .expect("clustering is failed.");
+
+    println!(
+        "res = {:?}",
+        clusters//.iter().map(|x| x.get_or_insert(2)).collect()
+    );
 }

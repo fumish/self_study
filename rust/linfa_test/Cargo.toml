@@ -8,7 +8,8 @@ anyhow = "1.0.86"
 kiss3d = "0.35.0"
 linfa = "0.7.0"
 linfa-clustering = "0.7.0"
-linfa-datasets = "0.7.0"
+linfa-datasets = {version="0.7.0", features=["generate"]}
 nalgebra = "0.33.0"
-ndarray = "0.16.0"
+ndarray = { version = "0.15", features = ["rayon", "approx"] }
 pcd-rs = {version="0.11.1", features=["derive"]}
+rand_xoshiro = "0.6"
