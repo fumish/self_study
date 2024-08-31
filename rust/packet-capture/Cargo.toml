@@ -1,0 +1,9 @@
+[package]
+name = "packet-capture"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = "0.4"
+env_logger = "0.6.1"
+pnet = "0.35.0"
