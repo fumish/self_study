@@ -1,0 +1,114 @@
+\begin{frame} {単項式イデアル}
+	前節で、1変数の多項式環におけるイデアル記述問題とイデアル所属問題について考えた。
+	次に多変数の多項式環について考えたいが、任意のイデアルを考えることは難しいので、
+	単項式から生成されるイデアルである単項式イデアルについてまず考える。
+	\begin{definition} {単項式イデアル}
+		単項式からなる生成系を持つイデアルのことを、単項式イデアルと呼ぶ。
+	\end{definition}
+	例えば、$\langle x, xy, x^2 \rangle \subset K[x,y]$は単項式イデアルである。
+	また、単項式イデアルの生成系は、必ず単項式の集合になるわけではなく、
+	$\langle x_1^2, x_2^3 \rangle = \langle x_1^2, x_1^2+x_2^3 \rangle$などと表すことができる。
+\end{frame}
+
+\begin{frame}
+	単項式を考えるので、単項式の集合を定義しておく。変数$x_1, \ldots, x_n$の単項式全体の集合を
+	\begin{align*}
+		M_n := \{ \prod_{i=1}^n x_i^{a_i} | a_i \in \mathbb{Z}_{\geq 0} \}
+	\end{align*}
+	と表す。
+	このとき、単項式イデアルは、$M_n$の必ずしも有限でない部分集合$M \subset M_n$をもとに、
+	$I = \langle \{ u | u \in M \} \rangle$と書くことができる。
+\end{frame}
+
+\begin{frame} {単項式イデアルの元となる単項式}
+	有限生成な単項式イデアルの一例として、$I = \langle x_1 x_2^5, x_1^4 x_2^3, x_1^6 \rangle \subset K[x_1, x_2]$を考える。
+	これは、$M_2$の有限な部分集合$\{x_1 x_2^5, x_1^4 x_2^3, x_1^6\}$が$I$の生成系となっていることが分かる。
+	また、生成系の定義から、このイデアルに属する多項式$f$は、
+	\begin{align*}
+		f = h_1 x_1 x_2^5 + h_2 x_1^4 x_2^3 + h_3 x_1^6, h_1, h_2, h_3 in K[x_1, x_2]
+	\end{align*}
+	と書くことができるし、このように書ける元を集めたものが$I$でもある。\\
+	$I$の特徴づけをする。生成系の元の単項式のいずれかで割り切れる単項式は、全て$I$の元であることがわかる。\\
+	\begin{exampleblock} {例}
+		$x_1 x_2^7 = x_2^2 (x_1 x_2^5) \in I$, であり$x_1 x_2^5$で割り切れる。
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	逆に、ある\red{単項式$u$} $\in M_2$があって、これが$I$の元であるとする。
+	このとき
+	\begin{align*}
+		u = h_1 x_1 x_2^5 + h_2 x_1^4 x_2^3 + h_3 x_1^6, h_1, h_2, h_3 \in K[x_1, x_2]
+	\end{align*}
+	と表せるが、左辺は単項式なので、右辺は$\{ x_1 x_2^5, x_1^4 x_2^3, x_1^6 \}$のいずれかで割り切れる。
+	\begin{block} {コメント}
+		今回の例では、$u$は3つの単項式のいずれかで割り切れるが、$h_i$は任意の多項式なので、基本的に項の数は3つ以上ある。
+		ただ、それらの項は3つの単項式のいずれかで括れる(=割り切れる)ということを述べている。
+	\end{block}
+\end{frame}
+
+\begin{frame}
+	以上の議論を、必ずしも有限とは限らない単項式の集合$\{ u_{\lambda} | \lambda \in \Lambda \} \subset M_n$
+	で生成される一般の単項式イデアルに拡張する。単項式イデアル$\langle \{ u_{\lambda} | \lambda \in \Lambda \} \rangle$
+	の元である\red{単項式$u$}は
+	\begin{align*}
+		u = \sum_{\lambda \in \Lambda} g_{\lambda} u_{\lambda}, g_{\lambda} \in K[x_1, \ldots, x_n]
+	\end{align*}
+	と表すことができ、この右辺を展開して得られる項のうち係数が0でないものはただ一つであり、その項は$\{ u_{\lambda} | \lambda \in \Lambda \}$のいずれかの元で割り切れる。
+	これを補題としてまとめると、以下の通りになる。
+	\begin{lemma}
+		\label{lem:single_monomial}
+		$I = \langle \{u | u \in M\} \rangle$を$K[x_1, \ldots, x_n]$の単項式イデアルとすると、
+		単項式$v \in M_n$が$I$の元であるための必要十分条件は、ある単項式$u \in M$が$v$を割り切ることである。
+	\end{lemma}
+	ここで単項式$u=x_1^{a_1} \cdots x_n^{a_n}$が単項式$v=x_1^{b_1} \cdots x_n^{b_n}$を割り切るとは、
+	$a_i \leq b_i$が全ての$i$に対して成り立つことをいう。
+
+\end{frame}
+
+\begin{frame}
+	なお、2変数の単項式イデアルと、それに属する単項式かどうかは
+	$x^a y^b$を二次元平面上の点$(a, b)$と対応させることで確認できる(教科書の図1.1参照)。\\
+	図1.1の各点は単項式イデアル$I = \langle xy^5, x^4y^3, x^6 \rangle$に含まれる多項式を表しているが、
+	$(1,5), (4,3), (6,0)$を左下の点として、
+	幅、高さが無限の四角形の和集合が$I$に含まれる単項式であることを表している(単項式の次数は非負整数なので、非負整数上のみ考える)。
+\end{frame}
+
+\begin{frame} {単項式イデアルの元となる多項式}
+	次に単項式イデアル$I=\langle \{ u_{\lambda} | \lambda \in \Lambda \} \rangle$
+	の元となる多項式$f \in I$を特徴づける。\\
+	$f$を
+	\begin{align*}
+		f = \sum_{\lambda \in \Lambda} g_{\lambda} u_{\lambda}, g_{\lambda} \in K[x_1, \ldots, x_n]
+	\end{align*}
+	と表し、右辺に含まれる単項式を考える。それらはすべて、いずれかの$u_{\lambda}$で割り切れて、$I$の元の単項式であることがわかる。\\
+	逆に、単項式イデアル$I$の元である単項式を任意に選び、それらの線形結合として、多項式$f$を作ればイデアルの性質から$f \in I$である。\\
+
+\end{frame}
+
+\begin{frame}
+	これらをまとめて、補題にすると以下のようになる。
+	\begin{lemma}
+		\label{lem:monomial_ideal}
+		$I$を$K[x_1, \ldots, x_n]$の単項式イデアルとし、$f \in K[x_1, \ldots, x_n]$とする。\\
+		このとき、次の3つは互いに同値である。\\
+		\begin{enumerate}
+			\item $f \in I$
+			\item $f$の全ての項は$I$に属する
+			\item $f$は$I$の元である単項式の線形結合として表せる
+		\end{enumerate}
+	\end{lemma}
+\end{frame}
+
+\begin{frame}
+	補題\ref{lem:single_monomial}, 補題\ref{lem:monomial_ideal}から、
+	単項式イデアルのイデアル所属問題(ある多項式がイデアルの所属するか)の解を考える。\\
+	$f \in K[x_1, \ldots, x_n]$が
+	単項式イデアル$I = \langle \{ u |u \in M_n \} \rangle$に含まれるかどうかは、
+	$f$の全ての単項式が$I$に含まれるかどうかを調べればよい(補題\ref{lem:monomial_ideal}の条件2より)。\\
+	$f$の各単項式が$M_n$のいずれかの元で割り切れれば、補題\ref{lem:single_monomial}から
+	その単項式は$I$に含まれるので$f$も$I$に含まれる。\\
+	したがって、$f$に含まれるすべての単項式が、それぞれいずれかの$u \in M_n$で割り切れることが、$f$が$I$の元であるための必要十分条件である。
+\end{frame}
+% \begin{frame}
+% \end{frame

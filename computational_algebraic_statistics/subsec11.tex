@@ -1,0 +1,57 @@
+
+\begin{frame}{線形な連立方程式}
+以下の問題をまず考える
+\begin{equation}
+\left\{
+   \begin{aligned}
+   & x+2y-z=2 \\
+   & x+y-4z=3 \\
+   & x+3y+3z=0
+   \end{aligned}
+\right.
+\end{equation}
+これは、連立1次方程式なので、線形代数で学ぶ手法を使えば良い
+\end{frame}
+
+\begin{frame}
+次に、以下の問題も考えてみる
+\begin{equation}
+\left\{
+   \begin{aligned}
+   & x^2+y^2+4z^2=81 \\
+   & x-y+z^2=13 \\
+   & xz-2y=18
+   \end{aligned}
+\right.
+\end{equation}
+これは、第2式の2倍を第3式から引いてyを消去し、$xz-2x-2z^2=-8$を得て、この因数分解$(z-2)(x-2z-4)=0$を行うことで、計算ができる。
+\end{frame}
+
+\begin{frame}
+次の問題は少し難しい
+\begin{equation}
+\left\{
+   \begin{aligned}
+   & x^2+y^2+4z^2=90 \\
+   & x-y+z=12 \\
+   & xz-3y=28
+   \end{aligned}
+\right.
+\end{equation}
+これは、同じような因数分解ができない。
+グレブナー基底の計算のような方法で解いてみようと思ったが、教科書と同じ式導出になりそうなので、教科書で説明
+\end{frame}
+
+\begin{frame} {注意点}
+
+\begin{itemize}
+\item 先ほどの手順はグレブナー基底の計算アルゴリズムになっていることが、後の章で分かる。
+\item グレブナー基底は、各単項式(定義はいずれ出てくる)の順序を与えると得られるもので、今回の手順は、$x \succ y \succ z$で純辞書式順序という順序を用いた場合の結果になっている
+\item 最終的に得られた連立方程式の形式は$z$だけの式だった。これは偶然ではなく、消去定理の結果から、純辞書式順序を用いると、連立方程式のうちの一つが一つの変数の方程式になるためである(これはすごいと思った)。
+\end{itemize}
+\end{frame}
+
+\begin{frame} {実演}
+ここまでの式のグレブナー基底をPython求めてみる: \\
+Pythonでグレブナー基底を使う方法に例えばsympyがあるので、それを簡単に紹介する
+\end{frame}
