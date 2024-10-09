@@ -178,7 +178,7 @@
 		    & = (z-3)^2f_1+(2yz^2-6yz+6z^2-16z-(z-3)^2(x+y-12))f_2+(-2yz+6y-6z+16)f_3 \\
 		    & \in \langle f_1, f_2, f_3\rangle
 	\end{align*}
-	である(途中の式展開はちょっと怪しい。ただ、$f_1,f_2,f_3$の多項式倍の和であることは分かる加と思います)。
+	である(途中の式展開はちょっと怪しい。ただ、$f_1,f_2,f_3$の多項式倍の和であることは分かるかと思います)。
 \end{frame}
 
 \begin{frame}
@@ -212,7 +212,7 @@
 		\end{enumerate}
 	\end{definition}
 	\begin{block} {コメント}
-		$f, g \in I$の$-1 \in K[x_1,\ldots, x_n]$から$-1 \times g \in I$で、$f+(-g)=f-g \in I$である(差についても閉じていて、そういう前提で説明していく)
+		$f, g \in I$に対して、$ -1 \in K[x_1,\ldots, x_n]$から$-1 \times g \in I$で、$f+(-g)=f-g \in I$である(差についても閉じていて、そういう前提で説明していく)
 	\end{block}
 	また、この定義は厳密には左イデアルと言う気がするがこの教科書ではイデアルと呼ぶ。
 \end{frame}
@@ -221,7 +221,7 @@
 	$I=\langle f_1,\ldots,f_r\rangle \subset K[x_1,\ldots,x_n]$がイデアルであることを、定義に従って確認する。\\
 	$f, g \in \langle f_1,\ldots,f_r\rangle$とする。$f = \sum_{i=1}^r h_i f_i, g = \sum_{i=1}^r h'_i f_i$とすると、
 	$f+g = \sum_{i=1}^r (h_i+h'_i) f_i$となり$f+g \in I$である。\\
-	$f = f = \sum_{i=1}^r h_i f_i \in \langle f_1,\ldots,f_r\rangle, h \in K[x_1,\ldots,x_n]$とすると、
+	$f = \sum_{i=1}^r h_i f_i \in \langle f_1,\ldots,f_r\rangle, h \in K[x_1,\ldots,x_n]$とすると、
 	$hf = \sum_{i=1}^r (h_i h) f_i$となり$hf \in I$である。\\
 	したがって、$I$はイデアルである。
 \end{frame}
@@ -229,19 +229,20 @@
 \begin{frame} {有限生成なイデアル}
 	イデアル$\langle f_1, \ldots, f_r \rangle$は、有限個の多項式$\{ f_1, \ldots, f_r \}$
 	から定義される自然なイデアルであるが、任意のイデアルがこのように書けるかは自明でないため、それが可能か考えていく。\\
-	それを考えるため$K[x_1, \ldots, x_n]$の空でない部分集合${f_{\lambda} | \lambda \in \Lambda}$に対する有限和
+	それを考えるため$K[x_1, \ldots, x_n]$の空でない部分集合$\{f_{\lambda} | \lambda \in \Lambda\}$に対する有限和
 	\begin{align*}
 		\sum_{\lambda \in \Lambda} h_{\lambda} f_{\lambda}, h_{\lambda} \in K[x_1, \ldots, x_n]
 	\end{align*}
 	の全体からなる集合を考える。
 	ここで、$\Lambda$は添字集合(有限でも、加算でも、非加算でも良い)であり、
-	${h_{\lambda} | \lambda in \Lambda}$は有限個を除いて0である多項式の集合である。\\
+	$\{h_{\lambda} | \lambda \in \Lambda\}$は\red{有限個}を除いて0である多項式の集合である。\\
 	この集合は和、多項式倍について閉じていることは自明なのでイデアルである。\\
-	このイデアルを${f_{\lambda}|\lambda \in \Lambda}$が生成するイデアルと呼び
+	このイデアルを$\{f_{\lambda}|\lambda \in \Lambda\}$が生成するイデアルと呼び
 	\begin{align*}
 		\langle \{ f_{\lambda} | \lambda \in \Lambda \} \rangle
 	\end{align*}
 	と書く。
+
 \end{frame}
 
 \begin{frame}
@@ -251,6 +252,14 @@
 	この$\{ f_{\lambda} | \lambda \in \Lambda \}$を$I$の生成元と呼ぶ。\\
 	添字集合は無限の場合も考えられるが、$\langle f_1, \ldots, f_r \rangle$は有限個の多項式から生成されていて、
 	そういったイデアルを有限生成なイデアルと呼ぶ。\\
+	\begin{block} {コメント}
+	この資料を準備した当初有限個を除いて0である多項式の集合は有限な生成系のように感じていましたが、後の証明を考える過程で
+	\begin{align*}
+		\sum_{\lambda \in \Lambda} h_{\lambda} f_{\lambda}, h_{\lambda} \in K[x_1, \ldots, x_n]
+	\end{align*}
+	の$h_{\lambda} \neq 0$が有限個というのは、各元で0になる$h_{\lambda}$は異なるので
+	有限な生成系にはならないものだと理解しました。
+	\end{block}
 \end{frame}
 
 \begin{frame} {イデアルに関する諸問題}

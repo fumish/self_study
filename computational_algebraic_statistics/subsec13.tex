@@ -95,20 +95,122 @@
 		\begin{enumerate}
 			\item $f \in I$
 			\item $f$の全ての項は$I$に属する
-			\item $f$は$I$の元である単項式の線形結合として表せる
+			\item $f$は$I$の元である単項式の線形結合として表せる(単項式のイデアルの定義から成り立つような...)
 		\end{enumerate}
 	\end{lemma}
 \end{frame}
 
-\begin{frame}
+\begin{frame} {単項式イデアルのイデアル所属問題}
 	補題\ref{lem:single_monomial}, 補題\ref{lem:monomial_ideal}から、
 	単項式イデアルのイデアル所属問題(ある多項式がイデアルの所属するか)の解を考える。\\
 	$f \in K[x_1, \ldots, x_n]$が
 	単項式イデアル$I = \langle \{ u |u \in M_n \} \rangle$に含まれるかどうかは、
 	$f$の全ての単項式が$I$に含まれるかどうかを調べればよい(補題\ref{lem:monomial_ideal}の条件2より)。\\
 	$f$の各単項式が$M_n$のいずれかの元で割り切れれば、補題\ref{lem:single_monomial}から
-	その単項式は$I$に含まれるので$f$も$I$に含まれる。\\
-	したがって、$f$に含まれるすべての単項式が、それぞれいずれかの$u \in M_n$で割り切れることが、$f$が$I$の元であるための必要十分条件である。
+	その単項式は$I$に含まれるので$f$も$I$に含まれる。以上をまとめると、\\
+	\begin{block} {単項式イデアルの所属問題}
+		$f$に含まれるすべての単項式が、それぞれいずれかの$u \in M_n$で割り切れることが、$f$が$I$の元であるための必要十分条件である。
+	\end{block}
+\end{frame}
+
+\begin{frame} {単項式イデアルの記述問題}
+	単項式イデアルの記述問題(単項式イデアルが与えられたとき、それを有限生成なイデアルで記述できるかどうか)を考える。\\
+	任意の単項式イデアル$I$は補題\ref{lem:monomial_ideal}の条件3から、$I$の単項式の線形結合で表せる(でもこれは、単項式イデアルの定義のような気もする)。\\
+	したがって、$I=\langle \{u | u \in M \subset M_n \} \rangle$と書けるが、
+	$\{u | u \in M \subset M_n \}$は有限集合とは限らないので、
+	\red{生成系として不要な元}を取り除くこと(かつ同じものを生成するイデアル)を考える。\\
+	\begin{exampleblock} {不要な元の例}
+		不要な元の例として、以下のようなものが考えられる:
+		\begin{itemize}
+			\item $I=<xy, xy^2>$を考えると、$xy^2$は、$y \times (xy)$なので不要。こういった不要な元を取り除くことを考えていく。
+			\item ある単項式$u \in I$は、それを割り切る単項式$v \in I$があれば、生成系には不要な元になる(補題\ref{lem:single_monomial}。
+		\end{itemize}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame} {極小元による生成系}
+	取り除けない元を極小元として次に定義する。
+	\begin{definition} {極小元}
+		単項式の集合$M_n$の空でない部分集合$M$に対して、$u \in M$が$M$の極小元であるとは、
+		任意の$v \in M$について、条件「$v$が$u$を割り切るならば$v=u$である」が成立することをいう。
+	\end{definition}
+	\begin{exampleblock} {極小元の例}
+		\begin{itemize}
+			\item $M = \{xy, xy^2, xy^3\}$の時、$u=xy$は、
+			      $v=xy^2, xy^3$に割り切られないが、$v=xy$に割り切られていて、
+									$v=u$が成り立っているので、$u=xy$は$M$の極小元
+			\item $M = \{x^2y^2, x^5, x^10y^10, x^4y^4\}$の時、$u=x^5$は、
+			他の元に割り切られていないので、極小元である。
+			      $u=x^2y^2$も他に割り切られてないので、極小元である。
+		\end{itemize}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+    \begin{block} {コメント}
+		この資料を準備していて、単項式の集合$M$における極小元というのは、$M$における素数のようなもの(単位元がないので違うが)だと感じた。
+	\end{block}
+	不要な元を削っていった結果、極小元が得られるが、それによって元の単項式イデアルを表現できることを次の補題で示す。
+	\begin{lemma}
+		単項式イデアル$I=\langle \{ u | u \in M \subset M_n \}\rangle$について、
+		$M$のすべての極小元からなる集合は$I$の生成系となる
+	\end{lemma}
+	証明は次ページで行うが、この補題によって極小元によって単項イデアルは表現できる事がわかる(ただし、極小元の数は有限かどうかはこの補題では分からない)。
+\end{frame}
+
+\begin{frame}
+	\begin{proof}
+	    \only<1> {
+					$M$の全ての極小元からなる集合を$\tilde{M}$とおき、
+					$I_0 = \langle \{u | u \in \tilde{M} \} \rangle$とおく。
+					このとき、$\tilde{M} \subset M$より、$I_0 \subset I$は自明である。\\
+					$I \subset I_0$を示すため、$f \in I$が$I_0$に含まれることを示す。生成系の定義より、
+					\begin{align*}
+						f = \sum_{u \in M} g_u u, g_u \in K[x_1, \ldots, x_n]
+					\end{align*}
+					と書ける。$g_u$は有限個を除いて0。
+					$g_u \neq 0$となる$u$について、
+					$u$を割り切る単項式を$\tilde{M}$から選ぶことができるので、これを$v_u$とする。
+					$h_u = g_u u / v_u$とすると、これは$K[x_1, \ldots, x_n]$の元であり、
+					\begin{align*}
+						f = \sum_{u \in M} h_u v_u
+					\end{align*}
+					と書くことができる。
+		}
+		\only<2> [証明続き] {
+		$v_u \in \tilde{M}$についてまとめたもの(同じ$v_u$を与える$h_u$は和をとる)で改めて書き直すと、
+		\begin{align*}
+			f = \sum_{v \in \tilde{M}} h^*_v v
+		\end{align*}
+		$\{h^*_v | v \in M\}$も有限個を除いて0なので、$f \in I_0$である。
+		}
+	\end{proof}
+\end{frame}
+
+\begin{frame}
+\begin{exampleblock} {極小元の生成系の例}
+単項式イデアル$I = \langle xy^5, x^4y3, x^6 \rangle$は極小元は、$\{xy^5, x^4y^3, x^6\}$である。
+この極小元に対して、冗長な元を適当に追加すると、例えば
+\begin{align*}
+    & xy^5, xy^6, x^2y^6, \\
+    & x^5y^5, x^6, x^6y^3, \\
+    & x^7y^4, x^7y^5, x^9
+\end{align*}
+を考えて、これらの生成系を作ることもできるが、この生成系は、極小元による生成系によって表現することができて、証明と同じように極小元にまとめる処理を行うと、
+\begin{align*}
+    & f = h_1 xy^5 + h_2 xy^6 + h_3 x^2y^6 + h_4 x^5y^5 + h_5 x^6 + h_6 x^6y^3 + h_7 x^7y^4 + h_8 x^7 y^5 + h_9 x^9\\
+    & = (h_1 + yh_2 + xy h_3 + x^4 h_4) xy^5 + (h_5 + x^3 h_9) x^6 + (x^2 h_6 + x^3 y h_7 + x^3y^2 h_8) x^4y^3
+\end{align*}
+となる。なお、\red{表し方は一意でなく}て、後述の順序関係を与えれば、一意な構成方法を与えることは可能になる(はず)。
+\end{exampleblock}
+\end{frame}
+
+\begin{frame} {Dicksonの補題}
+ここまでで、単項式イデアルのイデアル記述問題(イデアルが有限生成である)は、単項式の任意の集合の極小元が高々有限個であることを示せれば良い事がわかった。
+これは次のDicksonの補題によって保証される:
+\begin{Theorem} [Dicksonの補題]
+空でない単項式の任意の集合$M \subset M_n$の極小元は高々有限個である。
+\end{Theorem}
 \end{frame}
 % \begin{frame}
-% \end{frame
+% \end{frame}
