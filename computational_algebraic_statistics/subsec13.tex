@@ -138,79 +138,241 @@
 		\begin{itemize}
 			\item $M = \{xy, xy^2, xy^3\}$の時、$u=xy$は、
 			      $v=xy^2, xy^3$に割り切られないが、$v=xy$に割り切られていて、
-									$v=u$が成り立っているので、$u=xy$は$M$の極小元
+			      $v=u$が成り立っているので、$u=xy$は$M$の極小元
 			\item $M = \{x^2y^2, x^5, x^10y^10, x^4y^4\}$の時、$u=x^5$は、
-			他の元に割り切られていないので、極小元である。
+			      他の元に割り切られていないので、極小元である。
 			      $u=x^2y^2$も他に割り切られてないので、極小元である。
 		\end{itemize}
 	\end{exampleblock}
 \end{frame}
 
 \begin{frame}
-    \begin{block} {コメント}
+	\begin{block} {コメント}
 		この資料を準備していて、単項式の集合$M$における極小元というのは、$M$における素数のようなもの(単位元がないので違うが)だと感じた。
 	\end{block}
 	不要な元を削っていった結果、極小元が得られるが、それによって元の単項式イデアルを表現できることを次の補題で示す。
 	\begin{lemma}
+		\label{lem:minimal_element_generation}
 		単項式イデアル$I=\langle \{ u | u \in M \subset M_n \}\rangle$について、
 		$M$のすべての極小元からなる集合は$I$の生成系となる
 	\end{lemma}
-	証明は次ページで行うが、この補題によって極小元によって単項イデアルは表現できる事がわかる(ただし、極小元の数は有限かどうかはこの補題では分からない)。
+	証明は次ページで行うが、この補題によって極小元によって単項式イデアルは表現できる事がわかる(ただし、極小元の数は有限かどうかはこの補題では分からない)。
 \end{frame}
 
 \begin{frame}
 	\begin{proof}
-	    \only<1> {
-					$M$の全ての極小元からなる集合を$\tilde{M}$とおき、
-					$I_0 = \langle \{u | u \in \tilde{M} \} \rangle$とおく。
-					このとき、$\tilde{M} \subset M$より、$I_0 \subset I$は自明である。\\
-					$I \subset I_0$を示すため、$f \in I$が$I_0$に含まれることを示す。生成系の定義より、
-					\begin{align*}
-						f = \sum_{u \in M} g_u u, g_u \in K[x_1, \ldots, x_n]
-					\end{align*}
-					と書ける。$g_u$は有限個を除いて0。
-					$g_u \neq 0$となる$u$について、
-					$u$を割り切る単項式を$\tilde{M}$から選ぶことができるので、これを$v_u$とする。
-					$h_u = g_u u / v_u$とすると、これは$K[x_1, \ldots, x_n]$の元であり、
-					\begin{align*}
-						f = \sum_{u \in M} h_u v_u
-					\end{align*}
-					と書くことができる。
-		}
-		\only<2> [証明続き] {
+		$M$の全ての極小元からなる集合を$\tilde{M}$とおき、
+		$I_0 = \langle \{u | u \in \tilde{M} \} \rangle$とおく。
+		このとき、$\tilde{M} \subset M$より、$I_0 \subset I$は自明である。\\
+		$I \subset I_0$を示すため、$f \in I$が$I_0$に含まれることを示す。生成系の定義より、
+		\begin{align*}
+			f = \sum_{u \in M} g_u u, g_u \in K[x_1, \ldots, x_n]
+		\end{align*}
+		と書ける。$g_u$は有限個を除いて0。
+		$g_u \neq 0$となる$u$について、
+		$u$を割り切る単項式を$\tilde{M}$から選ぶことができるので、これを$v_u$とする。
+		$h_u = g_u u / v_u$とすると、これは$K[x_1, \ldots, x_n]$の元であり、
+		\begin{align*}
+			f = \sum_{u \in M} h_u v_u
+		\end{align*}
+		と書くことができる。
+		\let\qedsymbol\relax
+	\end{proof}
+\end{frame}
+
+\begin{frame}
+	\begin{proof}[証明続き]
 		$v_u \in \tilde{M}$についてまとめたもの(同じ$v_u$を与える$h_u$は和をとる)で改めて書き直すと、
 		\begin{align*}
 			f = \sum_{v \in \tilde{M}} h^*_v v
 		\end{align*}
 		$\{h^*_v | v \in M\}$も有限個を除いて0なので、$f \in I_0$である。
-		}
 	\end{proof}
 \end{frame}
 
 \begin{frame}
-\begin{exampleblock} {極小元の生成系の例}
-単項式イデアル$I = \langle xy^5, x^4y3, x^6 \rangle$は極小元は、$\{xy^5, x^4y^3, x^6\}$である。
-この極小元に対して、冗長な元を適当に追加すると、例えば
-\begin{align*}
-    & xy^5, xy^6, x^2y^6, \\
-    & x^5y^5, x^6, x^6y^3, \\
-    & x^7y^4, x^7y^5, x^9
-\end{align*}
-を考えて、これらの生成系を作ることもできるが、この生成系は、極小元による生成系によって表現することができて、証明と同じように極小元にまとめる処理を行うと、
-\begin{align*}
-    & f = h_1 xy^5 + h_2 xy^6 + h_3 x^2y^6 + h_4 x^5y^5 + h_5 x^6 + h_6 x^6y^3 + h_7 x^7y^4 + h_8 x^7 y^5 + h_9 x^9\\
-    & = (h_1 + yh_2 + xy h_3 + x^4 h_4) xy^5 + (h_5 + x^3 h_9) x^6 + (x^2 h_6 + x^3 y h_7 + x^3y^2 h_8) x^4y^3
-\end{align*}
-となる。なお、\red{表し方は一意でなく}て、後述の順序関係を与えれば、一意な構成方法を与えることは可能になる(はず)。
-\end{exampleblock}
+	\begin{exampleblock} {極小元の生成系の例}
+		単項式イデアル$I = \langle xy^5, x^4y3, x^6 \rangle$は極小元は、$\{xy^5, x^4y^3, x^6\}$である。
+		この極小元に対して、冗長な元を適当に追加すると、例えば
+		\begin{align*}
+			 & xy^5, xy^6, x^2y^6,  \\
+			 & x^5y^5, x^6, x^6y^3, \\
+			 & x^7y^4, x^7y^5, x^9
+		\end{align*}
+		を考えて、これらの生成系を作ることもできるが、この生成系は、極小元による生成系によって表現することができて、証明と同じように極小元にまとめる処理を行うと、
+		\begin{align*}
+			 & f = h_1 xy^5 + h_2 xy^6 + h_3 x^2y^6 + h_4 x^5y^5 + h_5 x^6 + h_6 x^6y^3 + h_7 x^7y^4 + h_8 x^7 y^5 + h_9 x^9 \\
+			 & = (h_1 + yh_2 + xy h_3 + x^4 h_4) xy^5 + (h_5 + x^3 h_9) x^6 + (x^2 h_6 + x^3 y h_7 + x^3y^2 h_8) x^4y^3
+		\end{align*}
+		となる。なお、\red{表し方は一意でなく}て、後述の順序関係を与えれば、一意な構成方法を与えることは可能になる(はず)。
+	\end{exampleblock}
 \end{frame}
 
 \begin{frame} {Dicksonの補題}
-ここまでで、単項式イデアルのイデアル記述問題(イデアルが有限生成である)は、単項式の任意の集合の極小元が高々有限個であることを示せれば良い事がわかった。
-これは次のDicksonの補題によって保証される:
-\begin{Theorem} [Dicksonの補題]
-空でない単項式の任意の集合$M \subset M_n$の極小元は高々有限個である。
-\end{Theorem}
+	ここまでで、単項式イデアルのイデアル記述問題(イデアルが有限生成である)は、単項式の任意の集合の極小元が高々有限個であることを示せれば良い事がわかった。
+	これは次のDicksonの補題によって保証される:
+	\begin{Theorem} [Dicksonの補題]
+		\label{thm:dickson}
+		空でない単項式の任意の集合$M \subset M_n$の極小元は高々有限個である。
+	\end{Theorem}
+	証明は極小元の候補を有限個のものから構成できることで示すが、証明を先に述べると説明を受けた人はイメージがつきにくいと思うので、
+	先に構成の手順を述べて、具体例で構成することにする。なお、数学的帰納法を用いるため、$n-1$ステップの成立のもとで、$n$ステップの構成方法を示す。\\
+	まず、以下の集合を定義する:$M \subset M_n$を任意の単項式の集合とする。
+	\begin{align}
+		 & N := \{u \in M_{n-1} | \exists b \geq 0, uy^b \in M\} \subset M_{n-1} \\
+		 & N_c := \{u \in N | uy^c \in M\} \subset M_{n-1}
+	\end{align}
 \end{frame}
-% \begin{frame}
-% \end{frame}
+
+\begin{frame}
+	これらを用いて、$M \subset M_n$に対する極小元の候補の構成方法は以下の通り。
+	\begin{enumerate}
+		\item 集合$N \subset M_{n-1}$を作る
+		\item 集合$N$の極小元(帰納法の仮定より高々有限)を求める。極小元の集合は$\{u_1, \ldots, u_s\}$として、
+		      各$u_i$は$b$に依存しており、最小の$b$を$b_i$とする
+		\item $b^* = \max_{i} b_i$を求める
+		\item $0 \leq c < b^*$となる各$c$に対して、$N_c$を求める
+		\item $N_c$の$c$毎の極小元(帰納法の仮定より高々有限)を求める。$N_c$の極小元の集合は、$\{u_1^{(c)}, \ldots, u_{s_c}^{(c)}\}$とする
+		\item 以下の単項式が$M \subset M_n$の極小元となる。
+		      \begin{align*}
+			      u_1 y^{b_1},            & \ldots, u_s y^{b_s}                      \\
+			      u_1^{(0)} ,             & \ldots, u_{s_0}^{(0)}                    \\
+			      u_1^{(1)}y ,            & \ldots, u_{s_1}^{(1)}y                   \\
+			                              & \ldots                                   \\
+			      u_1^{(b^*-1)}y^{b^*-1}, & \ldots ,u_{s_{b^*-1}}^{(b^*-1)}y^{b^*-1}
+		      \end{align*}
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	先ほどの構成法を具体的に適用する。
+	\begin{exampleblock} {例1}
+		図1.1で表される単項式イデアル$\langle xy^5, x^4y^3, x^6 \rangle$に含まれる単項式の集合を$M$として、$n=2$のステップを具体的に示す。\\
+		$u=x^c, c \geq 0$として$N$を求める。
+		$c=0$における$y^b$は存在しない。
+		$c=1$における$y^b$は存在して、$c=2$は$x(xy^5)$で表せて、$y^b$は存在。同様のことを繰り返すと、
+		\begin{align*}
+			N = {x, x^2, x^3, x^4, \ldots}
+		\end{align*}
+		この極小元は$x$であり、このイデアルに含まれる$xy^b$の最小の$b$は$5$なので$b^*=5$. \\
+		次に、$N_c, c=0,1,2,3,4$を求める。
+		\begin{align*}
+			 & N_0 = \{u \in N | uy^0 \in M\} = \{x^6, x^7, x^8, \ldots\} , N_1 = \{u \in N | uy^1 \in M\} = \{x^6, x^7, x^8, \ldots\} \\
+			 & N_2 = \{u \in N | uy^2 \in M\} = \{x^6, x^7, x^8, \ldots\} , N_3 = \{u \in N | uy^3 \in M\} = \{x^4, x^5, x^6, \ldots\} \\
+			 & N_4 = \{u \in N | uy^4 \in M\} = \{x^4, x^5, x^6, \ldots\}                                                              \\
+		\end{align*}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	\begin{exampleblock} {例1続き}
+		極小元は、それぞれ$N_0, N_1, N_2$は$x^6$, $N_3, N_4$は$x^4$.
+		以上から極小元の候補は、
+		\begin{align*}
+			\{xy^5, x^6, x^6y, x^6y^2, x^4y^3, x^4y^4\}
+		\end{align*}
+		この単項式イデアルの極小元は、$\{xy^5, x^4y^3, x^6\}$だったので、確かに含んでいることがわかる。
+	\end{exampleblock}
+
+\end{frame}
+
+\begin{frame}
+	\begin{exampleblock} {例2}
+		\begin{align*}
+			M = \{x_1^{a_1} x_2^{a_2} y^b | a_1 + 2a_2 + 3b \geq 10, a_1 + a_2 + 2b \geq 7, a_1,a_2,b \geq 0 \}
+		\end{align*}
+		の時、$n=3$のステップを確認する。\\
+		$M_2 \subset M$に対して$N$を求める。$b\geq 3$の時、任意の$a_1, a_2$で不等式が成り立つので$N=M_2$.\\
+		$1 \in N$であることに注意して極小元は$1$になる。$1 \times y^b$が$M$に含まれる最小の$b$は$4$なので$b^*=4$.\\
+		次に、$N_0, N_1, N_2, N_3$の極小元を求める。それぞれ不等式を満たす$x_1^{a_1} x_2^{a_2}$全てを含むが、極小元は境界線にあるので
+		\begin{align*}
+			a_1 + 2a_2 = 10 - 3b, a_1 + a_2 = 7 - 2b, b=0,1,2,3
+		\end{align*}
+		をそれぞれ考えればよい。
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	\begin{exampleblock} {例2続き}
+		$N_0$の極小元は
+		\begin{align*}
+			 & u_1^{(0)} = x_2^7, u_2^{(0)}=x_1x_2^6, u_3^{(0)}=x_1^2x_2^5, u_4^{(0)}=x_1^3x_2^4,    \\
+			 & u_5^{(0)} = x_1^4x_2^3, u_6^{(0)}=x_1^6x_2^2, u_7^{(0)}=x_1^8x_2, u_8^{(0)}=x_1^{10}.
+		\end{align*}
+		$N_1$の極小元は
+		\begin{align*}
+			u_1^{(1)} = x_2^5, u_2^{(1)}=x_1x_2^4, u_3^{(1)}=x_1^2x_2^3, u_4^{(1)}=x_1^3x_2^2, u_5^{(1)} = x_1^5x_2^1, u_6^{(1)}=x_1^7.
+		\end{align*}
+		$N_2$の極小元は、
+		\begin{align*}
+			 & u_1^{(2)} = x_2^3, u_2^{(2)}=x_1x_2^2, u_3^{(2)}=x_1^2x_2, u_4^{(2)}=x_1^4.
+		\end{align*}
+		$N_3$の極小元は、
+		\begin{align*}
+			u_1^{(3)}=x_2, u_2^{(3)}=x_1.
+		\end{align*}
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	\begin{exampleblock} {例2の続き}
+		したがって極小元の候補は、
+		\begin{align*}
+			 & \{y^4,                                                                               \\
+			 & x_2^7, x_1x_2^6, x_1^2x_2^5, x_1^3x_2^4, x_1^4x_2^3, x_1^6x_2^2, x_1^8x_2, x_1^{10}, \\
+			 & x_2^5y, x_1x_2^4y, x_1^2x_2^3 y,x_1^3x_2^2y, x_1^5x_2^1y, x_1^7y,                    \\
+			 & x_2^3y^2, x_1x_2^2y^2, x_1^2x_2y^2, x_1^4y^2,                                        \\
+			 & x_2 y^3, x_1y^3\}.
+		\end{align*}
+		これらはそれぞれが他方を割り切ることがないので、全てが極小元である。
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+	ここまでで構成法にも多少なれたと思うので、これをまとめる形でDicksonの補題を証明する
+	\begin{proof} [Dicksonの補題の証明]
+		数学的帰納法によって証明する。\\
+		$n=1$のとき、$M \subset M_1$である$M$は単項イデアルなので、次数が最小な単項式が極小元であり、これは高々有限個である。\\
+		$n-1$までの次元について、極小元が高々有限個であると仮定する。$n-1$次元目までの単項式をまとめて$u$, $n$次元目の変数を$y$とおいて、
+		\begin{align*}
+			N = \{u \in M_{n-1} | \exists b, 0 \leq b, uy^b \in M\} \subset M_{n-1}
+		\end{align*}
+		とする。仮定より$N$は高々有限個の極小元を持つ。
+		それらを$u_1, \ldots, u_s$として、各$u_i$に対して最小の$b$を$b_i$, $b_i$の中で最大のものを$b^*$とする。
+		$0 \leq c < b^*$となる$c$に対して$N_c = \{u \in N | uy^c \in M\} \subset M_{n-1}$とすると、$N_c$は高々有限個の極小元を持つ。
+		各$N_c$の極小元を$u_1^{(c)}, \ldots, u_{s_c}^{(c)}$とすると、$M \subset M_n$の極小元の候補は、次のページのもので与えられる。
+		\let\qedsymbol\relax
+	\end{proof}
+\end{frame}
+
+\begin{frame}
+	\begin{proof} [Dicksonの補題の証明(続き)]
+		\begin{align*}
+			 & u_1y^{b_1}, \ldots, u_sy^{b_s},                \\
+			 & u_1^{(0)}, \ldots, u_{s_0}^{(0)},              \\
+			 & \vdots                                         \\
+			 & u_1^{(b^*-1)}, \ldots, u_{s_{b^*-1}}^{(b^*-1)}
+		\end{align*}
+		実際、$M$の任意の単項式を$uy^e \in M, u \in M_{n-1}$と書くと、$N$の定義から$u \in N$なので、$u$は$u_1, \ldots, u_s$のいずれかで割り切れる。
+		$e \geq b^*$の場合、$uy^e$は$u_i^{b_i}, i=1,\ldots,s$のいずれかで割り切れる。
+		$0 \leq e < b^*$の場合、$N_e$の定義から$u \in N_e$であるので、$uy^e$は$u_i^{(c)}y^e, i=1,\ldots,s_e$のいずれかで割り切れる。
+		この極小元の候補は高々有限個であるので、$M \subset M_n$の極小元も高々有限個である。
+	\end{proof}
+\end{frame}
+
+\begin{frame} {この節のまとめ}
+	\begin{enumerate}
+		\item 補題\ref{lem:single_monomial}, \ref{lem:monomial_ideal}によって、
+		      $f$に含まれるすべての単項式が、それぞれいずれかの$u \in M_n$で割り切れることが、$f$が$I$の元であるための必要十分条件であり、
+		      これによって単項式イデアルのイデアル所属問題は解くことができた。
+		\item 補題\ref{lem:minimal_element_generation}によって、任意の単項式イデアルは極小元によって生成でき、
+		      Dicksonの補題によって高々な有限個の極小元で生成できる。したがって、単項式イデアルのイデアル記述問題は解くことができた。
+		\item 任意の単項式イデアル$I$を与える生成系で極小元による生成系は包含関係で極小な生成系であり、一意に定まる。
+	\end{enumerate}
+
+	\begin{block} {コメント}
+		ただし、この方法は単項式イデアルにしか適用できない。また最初に話した連立方程式は、基本的に多項式イデアルである: \\
+		例: $\langle xy, x^4 \rangle$は単項式イデアルだが、代数多様体は$\{(0,0)\}$で自明な解しか得られない。\\
+		多項式イデアルについては、次節で扱う。
+	\end{block}
+\end{frame}
