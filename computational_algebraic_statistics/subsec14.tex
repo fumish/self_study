@@ -1,0 +1,58 @@
+\begin{frame} {単項式順序}
+	単項式でない一般の多項式環に対するイデアルを考えていく。
+	1変数の多項式環のイデアルについて振り返ると、
+	1変数の多項式環のイデアル所属問題は、$f$の$g$による割り算の表示
+	\begin{align*}
+		f = qg + r, q, r, \in K[x], deg(r) < deg(g)
+	\end{align*}
+	から
+	\begin{align*}
+		f \in (g) \Leftrightarrow r = 0
+	\end{align*}
+	により判定できる。\\
+	この議論を多変数の場合に拡張する。
+\end{frame}
+
+\begin{frame}
+	1変数の割り算が、次数を小さくするように置き換えていたことを鑑みる:
+	$g = x^2-3x+1$は、$x^2$を$g+3x-1$で置き換え続ければ良かったが、多変数について考えると、例えば、
+	$h=x^2 - yz$による割り算は、$x^2$と$yz$の次数が同じなので、次数を小さくすることができない。
+	したがって、多変数の場合、\red{どの単項式について置き換えをするのかを次数と異なる基準で定める}必要がある。
+	そのため、単項式順序を導入する。
+	\begin{definition} {単項式順序}
+		変数$x_1, \ldots, x_n$の単項式全体の集合$M_n$における全順序$\prec$が$M_n$上の単項式順序であるとは、
+		以下の2条件を満たすものである:
+		\begin{enumerate}
+			\item 任意の単項式$1 \neq u \in M_n$は$1 \prec u$.
+			\item 任意の単項式$u, v, w \in M_n$に対して、$u \prec v \rightarrow uw \prec vw$.
+		\end{enumerate}
+	\end{definition}
+\end{frame}
+
+\begin{frame}
+	\begin{exampleblock} [1変数の例]
+		1変数の場合の次数による順序
+		\begin{align}
+			1 \prec x \prec x^2 \prec x^3 \prec \cdots \label{eq:prec1}
+		\end{align}
+		これが単項式順序であることを確認する。条件1より$1 \prec x$である。
+		次に、これと条件2より
+		\begin{align*}
+			1 \prec x \rightarrow x \prec x^2
+		\end{align*}
+		が得られる。したがって帰納的に(\ref{eq:prec1})が導かれる。
+	\end{exampleblock}
+\end{frame}
+
+\begin{frame} {よく使われる単項式順序}
+	主な単項式順序は以下のものがある:
+	\begin{definition} {辞書式順序}
+		単項式$u=\prod_{i=1}^n x_i^{a_i}, v = \prod_{i=1}^n x_i^{b_i}$において
+		\begin{itemize}
+			\item 純自書式順序: $(b_1-a_1, \ldots, b_n-a_n)$において、もっとも左にある0でない成分が正であるもの.以降$u \prec_{purelex} v$で記載する。
+			\item 辞書式順序: $deg(u)<deg(v)$であるか、あるいは$deg(u)=deg(v)$かつ純辞書式順序の関係にあるもの.以降$u \prec_{lex} v$で記載する。
+			\item 逆辞書式順序: $deg(u)<deg(v)$であるか、あるいは$deg(u)=deg(v)$かつ$(b_1-a_1, \ldots, b_n-a_n)$において、もっとも右にある0でない成分が負であるもの.
+			      以降$u \prec_{rev} v$で記載する。
+		\end{itemize}
+	\end{definition}
+\end{frame}
