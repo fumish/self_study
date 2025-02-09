@@ -1,0 +1,9 @@
+[package]
+name = "candle_svgd"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+candle-core = "0.8.2"
+candle-nn = "0.8.2"
+candle-optimisers = "0.8.0"
