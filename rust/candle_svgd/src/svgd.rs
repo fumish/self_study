@@ -8,24 +8,26 @@ use candle_core::{Result, Tensor};
 use candle_nn::optim::Optimizer;
 
 #[derive(Debug)]
-pub struct SVGD<S, T>
+pub struct SVGD<U, V, T>
 where
-    S: ProbDist,
+    U: ProbDist,
+    V: ProbDist,
     T: Kernel,
 {
     /// probability distribution of p(x|w), where w should be learnable parameter.
-    pxw: S,
+    pxw: U,
 
     /// probability distribution of p(w), where w should be learnable parameter.
-    pw: S,
+    pw: V,
 
     /// kernel function
     kernel: T,
 }
 
-impl<S, T> SVGD<S, T>
+impl<U, V, T> SVGD<U, V, T>
 where
-    S: ProbDist,
+    U: ProbDist,
+    V: ProbDist,
     T: Kernel,
 {
     /// create a new SVGD model
@@ -33,7 +35,7 @@ where
     /// pxw: probability distribution of p(x|w), where w should be learnable parameter.
     /// pw: probability distribution of p(w), where w should be learnable parameter.
     /// kernel: kernel function, where the first argument should be learnable parameter.
-    pub fn new(pxw: S, pw: S, kernel: T) -> Result<Self> {
+    pub fn new(pxw: U, pw: V, kernel: T) -> Result<Self> {
         Ok(Self { pxw, pw, kernel })
     }
 
@@ -68,7 +70,8 @@ where
         loop_param: LoopParam,
     ) -> Result<Tensor> {
         for ite in 0..loop_param.max_iter {
-            let loss = (-1. * self.forward(&sample, &post_param)?)?;
+            //let loss = (-1. * self.forward(&sample, &post_param)?)?;
+            let loss = self.forward(&sample, &post_param)?.neg()?;
             let _ = optimizer.backward_step(&loss)?;
             if let DispInterval::DISP(disp_interval) = loop_param.disp_interval {
                 if ite % disp_interval == 0 {

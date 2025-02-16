@@ -1,5 +1,6 @@
 use std::fmt::Display;
 
+use crate::prob_dist::ProbDist;
 /// This crate is utility functions for candle_svgd
 use candle_core::{DType, Error, IndexOp, Result, Tensor, WithDType};
 use candle_nn::{Optimizer, VarMap};
@@ -167,6 +168,28 @@ pub fn create_default_adamw_optimizer(var_map: VarMap) -> Result<candle_nn::Adam
         lr: 0.05,
         ..Default::default()
     };
-    let var_map = candle_nn::VarMap::new();
     candle_nn::AdamW::new(var_map.all_vars(), adamw_params)
+}
+
+pub fn sigmoid(x: &Tensor) -> Result<Tensor> {
+    1. / (1. + (-1. * x)?.exp()?)?
+}
+
+pub fn create_prob_samples<T>(
+    true_prob: T,
+    true_param: Tensor,
+    n_sample: usize,
+    n_params: usize,
+) -> Result<Tensor>
+where
+    T: ProbDist,
+{
+    // data generation
+    let gen_sample = true_prob.sample(n_sample, &true_param)?;
+
+    // repeat n_params times
+    let mut repeat_size = vec![n_params];
+    repeat_size.extend(vec![1; gen_sample.dims().len()]);
+
+    gen_sample.repeat(repeat_size)?.transpose(0, 1)
 }
