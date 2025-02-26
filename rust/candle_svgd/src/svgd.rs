@@ -46,17 +46,20 @@ where
         let null_sample = Sample::new(None, None)?;
 
         let kernel_post_detach = self.kernel.kernel(&detach_post_param, &detach_post_param)?;
-        let kernel_post = self.kernel.kernel(post_param, &detach_post_param)?;
+        let kernel_post = self.kernel.kernel(post_param, &detach_post_param)?.neg()?;
 
         let logpxw = self.pxw.log_p(sample, post_param)?;
         let logpw = self.pw.log_p(&null_sample, post_param)?;
 
         // calculate loss before derivative
-        let phiw = kernel_post_detach
-            .t()?
-            .matmul(&(logpxw + &logpw)?.broadcast_as((1, logpw.dim(0)?))?.t()?)?
-            .squeeze(1)?
-            + kernel_post.sum((1,))?;
+        let phiw =
+            (kernel_post_detach.broadcast_mul(&(logpxw + &logpw)?)? + &kernel_post)?.mean((1,));
+        //let phiw = (kernel_post_detach
+        //    .t()?
+        //    .matmul(&(logpxw + &logpw)?.broadcast_as((1, logpw.dim(0)?))?.t()?)?
+        //    .squeeze(1)?
+        //    + kernel_post.sum((1,))?)?;
+        //phiw * (1. / phiw.dim(0)?)
         phiw
     }
 

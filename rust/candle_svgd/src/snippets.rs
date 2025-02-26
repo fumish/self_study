@@ -132,14 +132,14 @@ pub fn svgd_normal(device: &Device, sample: &Sample, n_params: usize) -> Result<
     // create a new SVGD model
     let post_std = Tensor::new(vec![1.; dim], &device)?;
     let pxw = NormalMean::new(post_std)?;
-    let pri_std = (pri_beta * Tensor::ones((dim,), DType::F64, &device)?)?;
+    let pri_std = (pri_beta * Tensor::ones((dim,), DType::F64, device)?)?;
     let pw = NormalMean::new(pri_std)?;
     let kernel = RBF::new(band_type)?;
     let svgd_model = SVGD::new(pxw, pw, kernel)?;
 
     // create vars
     let var_map = VarMap::new();
-    let vs = VarBuilder::from_varmap(&var_map, DType::F64, &device);
+    let vs = VarBuilder::from_varmap(&var_map, DType::F64, device);
     let post_param = vs.get_with_hints(
         (n_params, dim),
         "post_param_of_mean",
@@ -184,14 +184,14 @@ pub fn svgd_lr(device: &Device, sample: &Sample, n_params: usize) -> Result<Tens
 
     // create a new SVGD model
     let pyxw = LogisticRegression::new(Some(sample.clone_x()?));
-    let pri_std = (pri_beta * Tensor::ones((dim,), DType::F64, &device)?)?;
+    let pri_std = (pri_beta * Tensor::ones((dim,), DType::F64, device)?)?;
     let pw = NormalMean::new(pri_std)?;
     let kernel = RBF::new(band_type)?;
     let svgd_model = SVGD::new(pyxw, pw, kernel)?;
 
     // create vars
     let var_map = VarMap::new();
-    let vs = VarBuilder::from_varmap(&var_map, DType::F64, &device);
+    let vs = VarBuilder::from_varmap(&var_map, DType::F64, device);
     let post_param = vs.get_with_hints(
         (n_params, dim),
         "post_param_of_weight",
@@ -345,4 +345,43 @@ fn svgd_toy_singular(device: &Device, sample: &Sample, n_params: usize) -> Resul
     svgd_model.optimize(&sample, &post_param, &mut optimizer, loop_param)?;
 
     Ok(post_param)
+}
+
+pub fn dkernel_test() -> Result<()> {
+    let n_params = 10;
+    let dim = 2;
+    let kernel = RBF::new(BandType::Fix(1.))?;
+    let device = Device::Cpu;
+
+    let var_map = VarMap::new();
+    let vs = VarBuilder::from_varmap(&var_map, DType::F64, &device);
+    let post_param = vs.get_with_hints(
+        (n_params, dim),
+        "post_param_of_mean",
+        DEFAULT_KAIMING_NORMAL,
+    )?;
+    //let mut optimizer = util::create_default_rmsprop_optimizer(var_map)?;
+
+    println!("before diff post_param = {}", post_param);
+    let dkernel = kernel
+        .kernel(&post_param, &post_param.detach())?
+        .sum((0,))?
+        .backward()?;
+
+    var_map.all_vars().iter().for_each(|v| {
+        if let Some(grad) = dkernel.get(v) {
+            println!("auto grad result = {}", grad);
+        }
+    });
+
+    let detach_param = post_param.detach();
+    let kernel_test = kernel.kernel(&detach_param, &detach_param)?;
+    //println!("dbg = {}", kernel_test.sum_keepdim((0,))?);
+    //let dkernel_test = detach_param.t()?.broadcast_mul(&kernel_test.sum((0,))?)?;
+    let dkernel_test = (detach_param.t()?.broadcast_mul(&kernel_test.sum((0,))?)?
+        - detach_param.t()?.matmul(&kernel_test)?)?
+    .t()?;
+    println!("manual grad result = {}", dkernel_test);
+
+    Ok(())
 }
